@@ -40,7 +40,7 @@ class SPL {
 
 						Matriks M = new Matriks(m,n);
 						M.BacaMATRIKS();
-						M.TulisSOLUSI();
+						M.TulisMATRIKS();
 					}
 
 					//JALANIN ELIMINASI GAUSS
