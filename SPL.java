@@ -3,6 +3,11 @@ import java.io.*;
 
 class SPL {
 	public static void main(String[] args) {
+		try {
+   		new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+		} catch (Exception e) {
+   		 System.out.println("Beda");
+		}
 		Scanner in = new Scanner(System.in);
 		System.out.println("MENU");
 		System.out.println("1. Sistem Persamaan Linear");
@@ -23,38 +28,135 @@ class SPL {
 
 				if (submenu == 1) {
 					//CEK FILE EKSTERNAL
-					Scanner hai = new Scanner(System.in);
-					System.out.println("Masukkan direktori File Eksternal : ");
-					String filename = hai.nextLine();
+					Scanner filex = new Scanner(System.in);
+					System.out.print("Masukkan direktori File Eksternal : ");
+					String namafile = filex.nextLine();
+					File file = new File(namafile);
 
-					if (!filename.equals("-")) {
-						//File file = new File(filename);
-						//BacaFILE(file, &M); //MASUKIN MASUKAN DARI FILE KE MATRIKS M
+					while (!file.exists() && !namafile.equals("-")) {
+						System.out.println("File tidak ada");
+						System.out.print("Masukkan direktori File Eksternal : ");
+						namafile = filex.nextLine();
+						file = new File (namafile);
+					}
+
+					if (!namafile.equals("-")) {
+						double[][] solusi = new double[105][105]; 
+						Solusi hasil = new Solusi();	
+						Matriks M = new Matriks();
+						M.BacaMATRIKS(file);
+						int[] adaSolusi = new int[1];
+						hasil.EliminasiGauss(M, solusi, adaSolusi);
+						if (adaSolusi[0] == 1) {
+							hasil.TulisSOLUSI(solusi, M.GetKolom()-1);
+							System.out.print("Masukan nama file untuk file output (dengan .txt dibelakangnya): ");
+							namafile = filex.nextLine();
+							hasil.TulisFILE(namafile, solusi, M.GetKolom()-1);
+						}else if (adaSolusi[0] == 0){
+							System.out.println("Sistem persamaan tersebut tidak memiliki solusi");
+						}
+						else if (adaSolusi[0] == 2){
+							hasil.TulisSOLUSI(solusi, M.GetKolom()-1);
+							System.out.print("Masukan nama file untuk file output (dengan .txt dibelakangnya): ");
+							namafile = filex.nextLine();
+							hasil.TulisFILE(namafile, solusi, M.GetKolom()-1);
+						}
 					}
 					else {
-						System.out.print("Baris : ");
-						int m = in.nextInt();
-
-						System.out.print("Kolom : ");
-						int n = in.nextInt();
-
-						Matriks M = new Matriks(m,n);
+						int m, n;
+						double[][] solusi = new double[105][105]; 
+						Solusi hasil = new Solusi();
+						int[] adaSolusi = new int[1];
+						System.out.print("Masukan banyak persamaan: ");
+						m = in.nextInt();
+						System.out.print("Masukan banyak variabel: ");
+						n = in.nextInt();
+						Matriks M = new Matriks(m,n+1);
 						M.BacaMATRIKS();
-						M.TulisMATRIKS();
+						hasil.EliminasiGauss(M, solusi, adaSolusi);
+						if (adaSolusi[0] == 1) { 
+							hasil.TulisSOLUSI(solusi, M.GetKolom()-1);
+							System.out.print("Masukan nama file untuk file output (dengan .txt dibelakangnya): ");
+							namafile = filex.nextLine();
+							hasil.TulisFILE(namafile, solusi, M.GetKolom()-1);
+						}
+						else if (adaSolusi[0] == 0){
+							System.out.println("Sistem persamaan tersebut tidak memiliki solusi");
+						}
+						else if (adaSolusi[0] == 2){
+							hasil.TulisSOLUSI(solusi, M.GetKolom()-1);
+							System.out.print("Masukan nama file untuk file output (dengan .txt dibelakangnya): ");
+							namafile = filex.nextLine();
+							hasil.TulisFILE(namafile, solusi, M.GetKolom()-1);
+						}
 					}
-
-					//JALANIN ELIMINASI GAUSS
-					//ElimGauss(M, m, n, &arr, &solusi); arr adalah array float untuk menyimpan solusi, apakah ada solusi nya
-
-					/* 
-							//TulisSOLUSI(arr, solusi);
-					*/
-					
-					//menu = 3;
+					menu = 3;
 				}
 				else if (submenu == 2) {
-					//JALANIN ELMINASI GAUSS-JORDAN
+					// JALANIN ELMINASI GAUSS-JORDAN
+					Scanner filex = new Scanner(System.in);
+					System.out.println("Masukkan direktori File Eksternal : ");
+					String namafile = filex.nextLine();
+					File file = new File (namafile);
 
+					while (!file.exists() && !namafile.equals("-")) {
+						System.out.println("File tidak ada");
+						System.out.print("Masukkan direktori File Eksternal : ");
+						namafile = filex.nextLine();
+						file = new File (namafile);
+					}
+
+					if (!namafile.equals("-")) {
+						double[][] solusi = new double[105][105]; 
+						int[] adaSolusi = new int[1];
+						Solusi hasil = new Solusi();
+						Matriks M = new Matriks();
+						M.BacaMATRIKS(file);
+						hasil.GaussJordan(M, solusi, adaSolusi);
+						if (adaSolusi[0] == 1) { 
+							hasil.TulisSOLUSI(solusi, M.GetKolom()-1);
+							System.out.print("Masukan nama file untuk file output (dengan .txt dibelakangnya): ");
+							namafile = filex.nextLine();
+							hasil.TulisFILE(namafile, solusi, M.GetKolom()-1);
+						}
+						else if (adaSolusi[0] == 0){
+							System.out.println("Sistem persamaan tersebut tidak memiliki solusi");
+						}
+						else if (adaSolusi[0] == 2){
+							hasil.TulisSOLUSI(solusi, M.GetKolom()-1);
+							System.out.print("Masukan nama file untuk file output (dengan .txt dibelakangnya): ");
+							namafile = filex.nextLine();
+							hasil.TulisFILE(namafile, solusi, M.GetKolom()-1);
+						}
+					}
+					else {
+						int m, n;
+						double[][] solusi = new double[105][105];
+						int[] adaSolusi = new int[1]; 
+						Solusi hasil = new Solusi();
+						System.out.print("Masukan banyak persamaan: ");
+						m = in.nextInt();
+						System.out.print("Masukan banyak variabel: ");
+						n = in.nextInt();
+						Matriks M = new Matriks(m,n+1);
+						M.BacaMATRIKS();
+						hasil.GaussJordan(M, solusi, adaSolusi);
+						if (adaSolusi[0] == 1) { 
+							hasil.TulisSOLUSI(solusi, M.GetKolom()-1);
+							System.out.print("Masukan nama file untuk file output (dengan .txt dibelakangnya): ");
+							namafile = filex.nextLine();
+							hasil.TulisFILE(namafile, solusi, M.GetKolom()-1);
+						}
+						else if (adaSolusi[0] == 0){
+							System.out.println("Sistem persamaan tersebut tidak memiliki solusi");
+						}
+						else if (adaSolusi[0] == 2){
+							hasil.TulisSOLUSI(solusi, M.GetKolom()-1);
+							System.out.print("Masukan nama file untuk file output (dengan .txt dibelakangnya): ");
+							namafile = filex.nextLine();
+							hasil.TulisFILE(namafile, solusi, M.GetKolom()-1);
+						}
+					}
 					menu = 3;
 				} 
 			}
@@ -62,21 +164,28 @@ class SPL {
 				System.out.println("1. Metode Eliminasi Gauss");
 				System.out.println("2. Metode Eliminasi Gauss-Jordan");
 				int submenu = in.nextInt();
+				Solusi inter = new Solusi();
 
 				while (submenu != 1 && submenu != 2) {
 					System.out.println("Masukkan salah");
 					submenu = in.nextInt();
 				}
 
-				if (submenu == 1) {
-					//JALANIN ELIMINASI GAUSS
+				Scanner filex = new Scanner(System.in);
+				System.out.println("Masukkan direktori File Eksternal : ");
+				String namafile = filex.nextLine();
+				File file = new File (namafile);
 
-					menu = 3;
+				while (!file.exists() && !namafile.equals("-")) {
+					System.out.println("File tidak ada");
+					System.out.print("Masukkan direktori File Eksternal : ");
+					namafile = filex.nextLine();
+					file = new File (namafile);
 				}
-				else if (submenu == 2) {
-					//JALANIN ELMINASI GAUSS-JORDAN
-					menu = 3;
-				}
+
+				inter.interpolasi(submenu, namafile);
+
+				menu = 3;
 			}
 			else {
 				System.out.println("Masukkan salah");
